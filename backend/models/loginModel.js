@@ -7,7 +7,6 @@ const loginModel = {
   getCredentials: async ({ user, password }) => {
     try {
       const pool = await poolPromise;
-      console.log('user:', user);
       const query = 'SELECT * FROM Users WHERE usuario = @user';
       const result = await pool
         .request()
@@ -36,19 +35,21 @@ const loginModel = {
   },
 
   // Función para registrar un nuevo usuario
-  registerUser: async ({ user, password, role }) => {
+  registerUser: async ({ usuario, clave, rol_id, mail }) => {
     try {
-     
       const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const hashedPassword = await bcrypt.hash(clave, saltRounds);
       const pool = await poolPromise;
-      const query = `INSERT INTO Users (usuario, clave, rol_id) VALUES (@user, @password, @role)`;
+      const query = `INSERT INTO Users (usuario, clave, rol_id, email) VALUES (@usuario, @clave, @rol_id, @mail)`;
+
+      console.log('Ejecutando consulta de insercion', query);
 
       await pool
         .request()
-        .input('user', sql.VarChar(50), user) // Usar un tamaño adecuado para el tipo de dato
-        .input('password', sql.VarChar(255), hashedPassword) // Almacenar la contraseña con hash
-        .input('role', sql.VarChar, role) // Almacenar la contraseña con hash
+        .input('usuario', sql.VarChar(50), usuario) // Usar un tamaño adecuado para el tipo de dato
+        .input('clave', sql.VarChar(255), hashedPassword) // Almacenar la contraseña con hash
+        .input('rol_id', sql.Int, rol_id) // Almacenar el rol
+        .input('mail', sql.VarChar(100), mail) // Almacenar el correo 
         .query(query);
 
       return true;
@@ -59,13 +60,13 @@ const loginModel = {
   },
 
   // Función para verificar si un usuario ya existe
-  checkUserExists: async ({ user }) => {
+  checkUserExists: async ({ usuario }) => {
     try {
       const pool = await poolPromise;
-      const query = 'SELECT * FROM Users WHERE usuario = @user';
+      const query = 'SELECT * FROM Users WHERE usuario = @usuario';
       const result = await pool
         .request()
-        .input('user', sql.VarChar(50), user)
+        .input('usuario', sql.VarChar(50), usuario)
         .query(query);
 
       return result.recordset.length > 0; // Si existe, devuelve true

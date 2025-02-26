@@ -259,7 +259,7 @@ const Solicitud = () => {
                             </div>
                         </div>
 
-                        {tipoPermiso == 2 && (
+                        {tipoPermiso === 2 && (
                                     <p className="text-sm text-red-500 mt-2">
                                         * Es necesario un certificado médico.
                                     </p>

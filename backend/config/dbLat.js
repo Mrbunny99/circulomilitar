@@ -3,7 +3,7 @@ const sql = require('mssql');
 const config = {
     user: 'Administrador',
     password: 'Sistemas2023',
-    server: '192.168.0.220',
+    server: '186.3.35.74',
     database: 'CIRCULOMILITAR2024',
     options: {
         encrypt: false, // true para conexiones en Azure

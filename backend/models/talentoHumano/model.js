@@ -195,7 +195,57 @@ const model = {
             .query(query);
 
         return result.recordset;
+    },
+
+    // CREAR USUARIO
+    crearUsuario: async (Usuario, clave, rol, mail) => {
+        const query = `INSERT INTO Users (usuario, clave, rol_id, email)
+                        OUTPUT INSERTED.*
+                        VALUES (@usuario, @clave, @rol, @mail)`;
+        try {
+            const pool = await poolCirmil;
+
+            const request = pool.request();
+            request.input('usuario', sql.VarChar, Usuario);
+            request.input('clave', sql.VarChar, clave);
+            request.input('rol_id', sql.Int, rol);
+            request.input('email', sql.VarChar, mail);
+
+            const result = await request.query(query);
+
+            return result.recordset[0];
+        } catch (error) {
+            console.error("Error al crear usuario:", error);
+            throw error;
+        }
+    },
+
+    
+    updateUsuario: async (id, user, password, role, mail) => {
+        const query = 'UPDATE usuarios SET usuario = ?, clave = ?, rol_id = ?, mail = ? WHERE id = ?';
+        const values = [user, password, role, mail, id];
+
+        try{
+            const [result] = await db.execute(query, values);
+            return result;
+        } catch (error) {
+            console.error("Error en updateUsuario:", error);
+            throw error;
+        }
+    },
+
+    getUsuarios: async () => {
+        const query = 'SELECT usuario, clave, rol_id, email FROM Users';
+
+        try {
+            const [rows] = await db.execute(query);
+            return rows;
+        } catch (error) {
+            console.error("Error en getUsuarios:", error);
+            throw error;
+        }
     }
 }
+
 
 module.exports = model;

@@ -5,6 +5,9 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3001;
 
+
+const router = express.Router();
+
 // Importar rutas
 const loginRouter = require('./routes/loginRoutes');
 const socioRouter = require('./routes/socioRoutes');
@@ -24,7 +27,6 @@ app.use(express.json());
 // Configurar rutas de API
 app.use('/api', loginRouter);
 app.use('/api', socioRouter);
-app.use('/api', reportRouter);
 app.use('/api', reportRouter);
 app.use('/api', talentoHumanoRouter);
 

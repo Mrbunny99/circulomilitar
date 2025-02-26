@@ -33,30 +33,34 @@ const loginController = {
     // Función para registrar un nuevo usuario
     registerUser: async (req, res) => {
         try {
-            const { user, password, role } = req.body;
+            const { usuario, clave, rol_id, mail } = req.body;
+            console.log('Datos recibidos', req.body);
 
             // Verificar que ambos campos existan
-            if (!user || !password) {
-                return res.status(400).json({ message: 'El nombre de usuario y la contraseña son obligatorios' });
+            if (!usuario || !clave || !mail) {
+                console.log('Faltan datos en la solicitud');
+                return res.status(400).json({ message: 'El nombre de usuario, la contraseña y el correo son obligatorios' });
             }
 
-            const userExists = await loginModel.checkUserExists({ user })
+            const userExists = await loginModel.checkUserExists({ usuario })
 
             if (userExists) {
+                console.log('El usuario ya existe');
                 return res.status(400).json({ message: 'El usuario ya existe' });
             }
 
-            const result = await loginModel.registerUser({ user, password, role });
+            const result = await loginModel.registerUser({ usuario, clave, rol_id, mail });
 
             if (result) {
                 console.log('Usuario creado');
                 return res.status(201).json({ message: 'Usuario registrado exitosamente' });
             } else {
+                console.log('Error al crear el usuario');
                 return res.status(400).json({ message: 'Error al registrar el usuario' });
             }
 
         } catch (error) {
-            console.error(error);
+            console.error('Error en el servidor', error);
             res.status(500).json({ message: 'Error en el servidor' });
         }
     }
